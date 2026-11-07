@@ -1,6 +1,7 @@
 """Study Guard UI. Untrusted content is displayed as plain text only."""
 
 import os
+from pathlib import Path
 
 import streamlit as st
 from google.genai.errors import APIError
@@ -11,26 +12,27 @@ from study_site import SAMPLE_PAGE, SAMPLE_RESULT, read_sample_site
 STUDENT_TASK = "Collect lesson notes about binary search from a third-party study page."
 
 st.set_page_config(page_title="AIM | AgentGuard", page_icon="🛡️", layout="wide")
-st.markdown("### TEAM AIM / HACKBU 2026")
-st.title("AgentGuard")
-st.write("Keep the lesson. Block the trap.")
-st.caption("A read-only student assistant inspecting untrusted third-party content.")
+stylesheet = Path(__file__).with_name("workspace.css").read_text(encoding="utf-8")
+st.html(f"<style>{stylesheet}</style>")
+st.html("""
+<div class="brandbar"><span class="brandmark" aria-hidden="true">A</span> Team AIM <small>HackBU 2026</small></div>
+<section class="hero"><div><h1>AgentGuard</h1>
+<p>Inspect a study page for instructions that try to take control of a student assistant.</p></div>
+<div class="flow" aria-label="The guard filters page content before returning lesson notes">
+<div class="trace" aria-hidden="true"><i></i><i></i><i></i></div>
+<div class="flow-labels"><span>Source</span><span>Guard</span><span>Notes</span></div></div></section>
+""")
+st.html(f'<div class="request"><strong>Student request</strong><span>{STUDENT_TASK}</span></div>')
 
-left, right = st.columns([1, 1.2], gap="large")
+left, right = st.columns([1, 1.12], gap="medium")
 with left:
-    st.subheader("1. Student request")
-    st.text(STUDENT_TASK)
-    st.caption("Authorized: read lesson text and display notes. No credentials or form submissions.")
-
-    st.subheader("2. Third-party study page")
+    st.header("Source page", anchor=False)
     has_key = bool(os.getenv("GEMINI_API_KEY"))
-    mode = st.radio("Guard mode", ["Live Gemini", "Offline example"], index=0 if has_key else 1)
+    mode = st.radio("Inspection mode", ["Live Gemini", "Offline example"], index=0 if has_key else 1, horizontal=True)
     if mode == "Offline example":
-        st.info("OFFLINE PLAYBACK - prerecorded sample verdict. No model or API call.")
-        st.caption("Custom pages require Live Gemini. Playback does not perform detection.")
+        st.caption("Replays the sample verdict locally. Use Live Gemini for custom pages.")
     else:
-        st.info("LIVE GEMINI - inspect the page with the model.")
-        st.caption("Page text is sent to Gemini only when you click an inspection button. Use fictional data.")
+        st.caption("Inspection sends page text to Gemini. Use fictional data.")
         if not has_key:
             st.warning("Live mode needs GEMINI_API_KEY configured on the server.")
 
@@ -48,16 +50,15 @@ with left:
     page = st.text_area(
         "Untrusted page text",
         key="page",
-        height=280,
+        height=190,
         max_chars=MAX_PAGE_CHARS,
         placeholder="Paste fictional lesson text here, or load the sample above.",
         help="This is untrusted source text. It is never rendered as HTML or executed.",
     )
     inspect = st.button("Inspect page", type="primary", width="stretch")
-    st.caption("Sample: a fictional binary-search lesson containing a student-password trap.")
 
 with right:
-    st.subheader("3. Guard decision")
+    st.header("Guard decision", anchor=False)
     if sample or inspect:
         st.session_state.pop("inspection", None)
         st.session_state.pop("inspection_error", None)
@@ -94,23 +95,22 @@ with right:
     if failed and failed[:2] == (page, mode):
         st.error("INSPECTION FAILED - No verdict. No notes released.")
         st.text(failed[2])
-        st.caption("A failed inspection is not a clean verdict. External actions remain unavailable.")
     elif saved and saved[:2] == (page, mode):
         result = saved[2]
-        st.caption("OFFLINE PLAYBACK / prerecorded fixture / no API call" if mode == "Offline example" else "LIVE GEMINI / model-generated verdict")
+        st.caption("Offline example  /  Prerecorded result" if mode == "Offline example" else "Live Gemini  /  Model decision")
         if result.has_malicious_instruction:
-            st.error("THREAT DETECTED - Malicious instruction identified.")
+            st.error("Threat detected", icon=":material/gpp_bad:")
         else:
-            st.success("CLEAN VERDICT - No malicious instruction detected.")
-            st.caption("This is a model verdict, not a guarantee that the page is safe.")
+            st.success("No threat detected", icon=":material/verified_user:")
 
-        st.markdown("**What the site tried to do**")
-        st.text(result.blocked_action or "No malicious action identified.")
-        st.markdown("**Why this decision was made**")
+        if result.blocked_action:
+            st.subheader("Attempted action", anchor=False)
+            st.text(result.blocked_action)
+        st.subheader("Reason", anchor=False)
         st.text(result.reason)
 
-        st.subheader("Lesson notes the student received")
-        st.caption("Extracted content / plain text / never executed")
+        st.divider()
+        st.subheader("Extracted lesson notes", anchor=False)
         st.text(run_action("display_notes", result) or "No usable notes found.")
 
         with st.expander("Four-field guard JSON"):
@@ -124,10 +124,8 @@ with right:
                 except PermissionError as error:
                     st.error(str(error))
     else:
-        st.info("READY - Load the sample to inspect it in one click, or inspect your own page.")
-        st.write("You will see the attempted action, the guard's reason and the lesson notes that remain.")
+        st.html('<div class="waiting"><b>Awaiting inspection</b><p>Load the sample to see which instruction the guard flags and which lesson notes reach the student.</p></div>')
         if saved or failed:
             st.caption("Page or mode changed. Inspect again for a result matching these inputs.")
 
-st.divider()
-st.caption("Demo boundary: model-based content inspection + code-enforced read-only permissions. Not a general security guarantee.")
+st.caption("Agent permissions: read page text and display notes. External submissions are disabled.")
