@@ -2,11 +2,11 @@
 
 Team workspace for the NYCAIRR AI Responsibility Hackathon, November 7–8, 2026.
 
-**Team AIM:** Anıl ([@Ozcelik-Anil](https://github.com/Ozcelik-Anil)), Irmak ([@kidikirmak2204-crypto](https://github.com/kidikirmak2204-crypto)), Emre ([@emrecan-aycil](https://github.com/emrecan-aycil)).
+**Team AIM:** Anil ([@Ozcelik-Anil](https://github.com/Ozcelik-Anil)), Irmak ([@kidikirmak2204-crypto](https://github.com/kidikirmak2204-crypto)), Emre ([@emrecan-aycil](https://github.com/emrecan-aycil)).
 
 ## Project status
 
-We are selecting the problem and defining a focused prototype. The product name, competition track, technology stack, and responsibilities will be documented once the team agrees on them.
+AgentGuard is a Streamlit demo of a read-only student assistant collecting binary-search notes from an untrusted study page. A Gemini guard inspects the text; backend permissions independently prohibit external actions. This UI work targets `feature/study-site-guard`.
 
 ## Working together
 
@@ -27,7 +27,49 @@ Read [CONTRIBUTING.md](CONTRIBUTING.md) for the short team guide.
 
 ## Run locally
 
-Setup and run instructions will be added with the first runnable prototype. No application has been implemented yet.
+```bash
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+python -m streamlit run app.py
+```
+
+Open the local URL printed by Streamlit. On Windows, activate with
+`.venv\Scripts\Activate.ps1` in PowerShell.
+
+### Offline sample
+
+Select **Offline example**, then click **Load Sample Study Site with Trap**.
+One click fetches a fictional page from a temporary loopback HTTP server and
+shows its prerecorded four-field verdict. This mode needs no API key and does
+not run a model. The lesson remains visible; the credential request is excluded
+from the extracted notes. Expand the permission simulation to verify that form
+submission is denied. No credentials are collected or transmitted by the simulation.
+
+### Live Gemini
+
+Set `GEMINI_API_KEY` in your server environment before launching Streamlit.
+Do not put keys in the UI, source files or commits. Select **Live Gemini**, then
+load the sample or edit the page and click **Inspect page**. Only fictional page
+text should be sent. The backend controls the model configuration in `guard.py`.
+
+Results are reused on reruns only while the page and mode match. Editing either
+hides the result until another inspection. Inspection failures clear previous
+notes and JSON and show a generic error without SDK exception details.
+
+### Verification
+
+```bash
+python -m unittest discover -v
+```
+
+Seven tests cover response validation, clean and threat display, note extraction,
+permission denial, changed inputs, failed inspections, failed sample loading,
+plain-text display and avoiding repeated live calls on reruns.
+
+The model's clean verdict is not a safety guarantee. This demo only permits local
+note display; it does not implement general-purpose web-agent protection. Offline
+playback and mocked live tests do not establish live Gemini detection accuracy.
 
 ## Submission
 

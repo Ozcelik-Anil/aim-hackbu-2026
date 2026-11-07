@@ -6,7 +6,7 @@ Keep this record accurate as the project develops. This is a working disclosure,
 
 - Codex assisted with problem exploration, finding public sources, and comparing possible prototype scopes.
 - Codex prepared the repository README, collaboration guide, ignore rules, pull request template, and this disclosure document.
-- No application implementation or model integration has been completed at this point.
+- The study-site guard branch contains the application and Gemini integration. See its source and tests for the implemented boundary.
 
 ## Record future assistance
 
@@ -24,3 +24,7 @@ Record libraries, APIs, datasets, adapted code, and assets actually used, with s
 ## Final review
 
 Before submission, replace status statements that are no longer current and ensure the team can explain the architecture, behavior, evaluation, and limitations.
+
+## Streamlit interface work - November 7, 2026
+
+Irmak prepared the AgentGuard interface and three UI regression tests with AI assistance. Codex integrated her handoff with the newer API and validation error handling on the team branch. The automated live-mode tests use mocked Gemini responses.
