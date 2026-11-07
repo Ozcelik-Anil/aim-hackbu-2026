@@ -2,7 +2,7 @@
 
 Team workspace for the NYCAIRR AI Responsibility Hackathon, November 7–8, 2026.
 
-**Team AIM:** Anıl ([@smurfspec](https://github.com/smurfspec)), Irmak ([@kidikirmak2204-crypto](https://github.com/kidikirmak2204-crypto)), Emre ([@emrecan-aycil](https://github.com/emrecan-aycil)).
+**Team AIM:** Anıl ([@Ozcelik-Anil](https://github.com/Ozcelik-Anil)), Irmak ([@kidikirmak2204-crypto](https://github.com/kidikirmak2204-crypto)), Emre ([@emrecan-aycil](https://github.com/emrecan-aycil)).
 
 ## Project status
 
