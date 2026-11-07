@@ -1,6 +1,7 @@
 import os
 
 import streamlit as st
+from google.genai.errors import APIError
 
 from guard import GuardResult, MAX_PAGE_CHARS, analyze_page, run_action
 from study_site import SAMPLE_PAGE, SAMPLE_RESULT, read_sample_site
@@ -43,6 +44,12 @@ with right:
                 with st.spinner("Inspecting the page…"):
                     result = analyze_page(page)
             st.session_state["inspection"] = (page, mode, result)
+        except APIError as error:
+            st.error(f"Gemini API returned status {error.code}. No notes were released.")
+            st.stop()
+        except ValueError:
+            st.error("The guard response could not be validated. No notes were released.")
+            st.stop()
         except Exception:
             st.error("Inspection failed. No notes were released. Check the API key, model access and connection.")
             st.stop()
