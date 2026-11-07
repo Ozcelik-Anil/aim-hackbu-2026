@@ -1,0 +1,42 @@
+/* AgentGuard workspace. All styled HTML is static, never page or model text. */
+:root { --ink:#152d28; --green:#086349; --mint:#aef6c0; --line:#d5dfd7; --paper:#f3f5ef; }
+.stApp { background:var(--paper); color:var(--ink); font-family:Inter,"Segoe UI",sans-serif; }
+[data-testid="stHeader"] { background:transparent; height:2.75rem; }
+.stMainBlockContainer { max-width:1260px; padding:3.25rem 2.75rem 3rem; }
+.brandbar { display:flex; align-items:center; gap:.65rem; border-bottom:1px solid var(--line); padding-bottom:.65rem; font-weight:700; letter-spacing:-.03em; color:var(--ink); }
+.brandmark { display:grid; place-items:center; width:27px; height:27px; color:white; background:var(--green); border-radius:6px; font:700 17px/1 monospace; }
+.brandbar small { margin-left:auto; font:600 .74rem/1.2 monospace; color:#435c52; }
+.hero { display:flex; justify-content:space-between; align-items:center; gap:2rem; padding:2rem 2.25rem; background:#123b31; border-radius:17px; color:white; overflow:hidden; }
+.hero h1 { font:650 clamp(2.5rem,5vw,4rem)/1 "Segoe UI",sans-serif; letter-spacing:-.065em; color:white; padding:0; margin:0 0 .65rem; }
+.hero p { margin:0; max-width:33rem; font:400 1rem/1.55 "Segoe UI",sans-serif; color:#d0e6d8; }
+.flow { flex:0 1 265px; min-width:180px; color:var(--mint); }
+.trace { height:57px; position:relative; display:grid; align-content:space-evenly; background:repeating-linear-gradient(90deg, transparent 0 16px,#ffffff0a 16px 17px); }
+.trace i { display:block; height:2px; background:var(--mint); }
+.trace i:nth-child(2) { width:50%; background:#ff9b84; }
+.trace::after { content:""; position:absolute; left:50%; top:-4px; height:65px; width:6px; transform:skew(-12deg); background:#e3f8d0; }
+.flow-labels { display:flex; justify-content:space-between; margin-top:9px; font:600 .67rem monospace; text-transform:uppercase; letter-spacing:.09em; }
+.request { display:flex; align-items:baseline; gap:1.2rem; padding:.85rem 1rem; background:#e6eee3; border-radius:8px; line-height:1.45; }
+.request strong { flex:none; font-size:.8rem; color:#305642; }
+[data-testid="stColumn"] { background:white; border:1px solid var(--line); border-radius:13px; padding:1.2rem 1.35rem; min-width:0; }
+[data-testid="stColumn"] h2, [data-testid="stColumn"] h3 { font-family:"Segoe UI",sans-serif; color:var(--ink); letter-spacing:-.04em; padding:0; }
+[data-testid="stColumn"] h2 { font-size:1.55rem; }
+[data-testid="stColumn"] h3 { font-size:1.12rem; }
+[data-testid="stColumn"] [data-testid="stVerticalBlock"] { gap:.65rem; }
+.stApp [data-testid="stCaptionContainer"] p { color:#496058; }
+.stApp [data-testid="stText"] { color:var(--ink); white-space:pre-wrap; overflow-wrap:anywhere; }
+.stApp [data-testid="stRadio"] label, .stApp [data-testid="stTextArea"] label { color:var(--ink); }
+.stApp textarea { color:#243f34!important; -webkit-text-fill-color:#243f34; background:#f6f8f4!important; font: .88rem/1.55 Consolas, monospace; }
+.stApp textarea::placeholder { -webkit-text-fill-color:#627368; }
+.stApp button[kind="primary"] { background:var(--green); border-color:var(--green); color:white; }
+.stApp button[kind="secondary"] { background:white; border:1px solid #a3b9a9; color:var(--ink); }
+.stApp button[kind="primary"]:hover { background:#054b37; }
+.stApp details { color:var(--ink); background:#fafbf8; }
+.stApp details summary { color:var(--ink); }
+.waiting { min-height:180px; display:grid; align-content:center; justify-items:center; padding:1.2rem; text-align:center; background:#f5f7f2; border:1px dashed #becdc0; border-radius:9px; }
+.waiting b { color:var(--ink); font-size:1.1rem; }
+.waiting p { max-width:27rem; margin:.4rem 0; color:#4a6051; }
+@media(max-width:740px) {
+  [data-testid="stHorizontalBlock"]:has(> [data-testid="stColumn"]) { flex-direction:column; }
+  [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] { width:100%; flex:auto; }
+}
+@media(max-width:740px) { .stMainBlockContainer {padding:3.1rem 1rem 1rem;} .hero {padding:1.4rem;} .flow {display:none;} .request {display:block;} .request strong {display:block;} [data-testid="stColumn"] {padding:1rem;} }
