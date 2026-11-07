@@ -1,6 +1,7 @@
 """Study Guard UI. Untrusted content is displayed as plain text only."""
 
 import os
+import json
 from pathlib import Path
 
 import streamlit as st
@@ -15,14 +16,15 @@ st.set_page_config(page_title="AIM | AgentGuard", page_icon="🛡️", layout="w
 stylesheet = Path(__file__).with_name("workspace.css").read_text(encoding="utf-8")
 st.html(f"<style>{stylesheet}</style>")
 st.html("""
-<div class="brandbar"><span class="brandmark" aria-hidden="true">A</span> Team AIM <small>HackBU 2026</small></div>
-<section class="hero"><div><h1>AgentGuard</h1>
-<p>Inspect a study page for instructions that try to take control of a student assistant.</p></div>
-<div class="flow" aria-label="The guard filters page content before returning lesson notes">
-<div class="trace" aria-hidden="true"><i></i><i></i><i></i></div>
-<div class="flow-labels"><span>Source</span><span>Guard</span><span>Notes</span></div></div></section>
+<nav class="mast" aria-label="Workspace"><b><span class="symbol" aria-hidden="true"></span>AgentGuard</b>
+<div><a href="#inspection">Inspection</a><a href="#evaluation">Evaluation</a></div><small>TEAM AIM</small></nav>
+<section class="cover"><div><h1>Inspect untrusted<br>web content.</h1>
+<p>Find instructions that exceed the student's permissions. Return the lesson notes the student asked for.</p></div>
+<div class="diagram" role="img" aria-label="Illustration of three page layers separated by a security filter">
+<div class="layer lower"></div><div class="layer filter"></div><div class="layer upper">
+<i></i><i></i><i></i></div><div class="diagram-label">READ-ONLY FILTER</div></div></section>
 """)
-st.html(f'<div class="request"><strong>Student request</strong><span>{STUDENT_TASK}</span></div>')
+st.html(f'<div class="request" id="inspection"><strong>Student request</strong><span>{STUDENT_TASK}</span></div>')
 
 left, right = st.columns([1, 1.12], gap="medium")
 with left:
@@ -129,3 +131,31 @@ with right:
             st.caption("Page or mode changed. Inspect again for a result matching these inputs.")
 
 st.caption("Agent permissions: read page text and display notes. External submissions are disabled.")
+
+eval_dir = Path(__file__).with_name("evals")
+cases = json.loads((eval_dir / "study_cases.json").read_text(encoding="utf-8"))
+run = json.loads((eval_dir / "live_run.json").read_text(encoding="utf-8"))
+outputs = {row["id"]: row for row in run["cases"]}
+attacks = [case for case in cases if case["expected_malicious_flag"]]
+clean = [case for case in cases if not case["expected_malicious_flag"]]
+
+st.html('<div class="eval-title" id="evaluation"><h2>Evaluation</h2><span>Recorded live run</span></div>')
+st.caption(f"{run['model']}  /  {run['run_date']}  /  Six fictional pages in three matched pairs")
+caught = sum(outputs[c["id"]]["verdict"]["has_malicious_instruction"] for c in attacks)
+alarms = sum(outputs[c["id"]]["verdict"]["has_malicious_instruction"] for c in clean)
+facts = sum(row["lesson_fact_preserved"] for row in outputs.values())
+st.html(f"""
+<div class="metrics">
+<div><b>{caught}<small> / {len(attacks)}</small></b><span>Attacks detected</span></div>
+<div><b>{alarms}<small> / {len(clean)}</small></b><span>Clean pages flagged</span></div>
+<div><b>{facts}<small> / {len(cases)}</small></b><span>Lesson facts preserved</span></div></div>
+""")
+topics = {"A": "Account security", "B": "Quoted instructions", "C": "Course footer"}
+if st.toggle("Explore recorded evidence"):
+    selected = st.selectbox("Recorded case", cases, format_func=lambda c: (
+        f"{topics[c['pair']]} / {'Attack' if c['expected_malicious_flag'] else 'Clean page'}"
+    ))
+    st.caption("Source text from the recorded case")
+    st.text(selected["page_text"])
+    st.caption("Recorded Gemini response")
+    st.json(outputs[selected["id"]]["verdict"])
