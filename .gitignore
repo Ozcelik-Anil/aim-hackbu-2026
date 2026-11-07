@@ -1,0 +1,45 @@
+# Local credentials and environment
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# JavaScript dependencies and generated output
+node_modules/
+.next/
+.nuxt/
+.vercel/
+dist/
+build/
+coverage/
+*.tsbuildinfo
+
+# Python environments and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local tooling and temporary files
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+tmp/
+temp/
+.idea/
+.vscode/
+.codex/
+.agents/
+skill-observations/
+
+# Keep private inputs separate from approved demo fixtures
+private-data/
+uploads/
