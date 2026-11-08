@@ -1,5 +1,7 @@
 """Bounded, read-only research using public article introductions and scholarly abstracts."""
 import json
+import time
+from threading import Lock
 from dataclasses import dataclass
 from contextlib import ExitStack
 from urllib.parse import quote
@@ -13,7 +15,21 @@ from pydantic import BaseModel
 from guard import MAX_PAGE_CHARS, MODEL, analyze_page, run_action
 from study_site import PageText
 
-MAX_SOURCES = 2
+MAX_SOURCES = 6
+MODEL_CALL_INTERVAL = 13.0
+_call_lock = Lock()
+_next_call_at = 0.0
+
+
+def wait_for_model(progress):
+    """Space research calls across sessions in this server process."""
+    global _next_call_at
+    with _call_lock:
+        delay = max(0.0, _next_call_at - time.monotonic())
+        if delay:
+            progress(f"Waiting {delay:.0f} seconds for the Gemini request window")
+            time.sleep(delay)
+        _next_call_at = time.monotonic() + MODEL_CALL_INTERVAL
 
 
 class Plan(BaseModel):
@@ -87,6 +103,7 @@ def investigate(question, key, progress, backup_key=None):
 
         def call(operation):
             nonlocal active_key, client
+            wait_for_model(progress)
             try:
                 return operation(client, active_key)
             except APIError as error:
@@ -95,6 +112,7 @@ def investigate(question, key, progress, backup_key=None):
                 active_key = backup_key
                 client = stack.enter_context(genai.Client(api_key=backup_key))
                 progress("Primary Gemini quota reached; continuing with backup.")
+                wait_for_model(progress)
                 return operation(client, active_key)
 
         progress("Planning two searches")

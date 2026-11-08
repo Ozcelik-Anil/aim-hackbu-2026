@@ -15,7 +15,7 @@ st.html(f"<style>{css}</style>")
 st.html('<section class="cover"><div><h1>AgentGuard Research</h1><p>Ask a question. The assistant searches public sources, checks each excerpt and returns cited findings.</p></div></section>')
 key = team_key("GEMINI_API_KEY")
 backup_key = team_key("GEMINI_BACKUP_API_KEY")
-st.caption("Searches Wikipedia and scholarly abstracts. Your question and source excerpts are processed by Gemini.")
+st.caption("Reads up to six sources from Wikipedia and scholarly abstracts. Research calls are spaced to reduce rate-limit errors; a full run usually takes about two minutes. Gemini processes your question and source excerpts.")
 with st.form("research"):
     question = st.text_input("Research question", max_chars=600, placeholder="How do passkeys protect users against phishing?")
     submitted = st.form_submit_button("Start research", type="primary")

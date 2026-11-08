@@ -17,7 +17,7 @@ AgentGuard checks source excerpts before synthesis and keeps the prototype's ava
 
 1. The user enters a research question.
 2. Gemini proposes up to two keyword searches.
-3. Python searches Wikipedia and Crossref and considers at most two unique source excerpts per run.
+3. Python searches Wikipedia and Crossref and considers at most six unique source excerpts per run.
 4. A Gemini guard checks each excerpt. Python validates its four-field JSON response and rejects inconsistent output.
 5. Checked, relevant notes supply the final explanation. Suspicious instructions, empty notes, and failed inspections are excluded.
 6. Each paragraph links to the source numbers it uses. The user can expand the source list and guard decisions.
@@ -92,7 +92,7 @@ Run the tests with your virtual environment's Python:
 python -m unittest discover -v
 ```
 
-The latest check passed **10 automated tests**. They cover the two-source cap, checked-evidence and citation handling, quota failover, malformed responses, permission denial, stale output, sample-load failures, plain-text display and reruns. Model responses in these tests are mocked.
+The latest check passed **11 automated tests**. They cover the six-source cap and shared request pacing, checked-evidence and citation handling, quota failover, malformed responses, permission denial, stale output, sample-load failures, plain-text display and reruns. Model responses in these tests are mocked.
 
 A separate live run evaluated six fictional pages in three matched attack/clean pairs:
 
@@ -105,13 +105,13 @@ Read the [case definitions and scoring protocol](evals/README.md) and [recorded 
 
 ## Quotas and failure handling
 
-The configured model is `gemini-3.5-flash` with low thinking. A normal two-source research run uses up to four Gemini calls: planning, two inspections and synthesis. A malformed inspection is retried once. HTTP 429 switches the interrupted step to the optional backup connection once; keys in the same Google project share quota.
+The configured model is `gemini-3.5-flash` with low thinking. A normal six-source research run uses up to eight Gemini calls: planning, six inspections and synthesis. Research calls are spaced by at least 13 seconds across sessions in the same server process. A full run typically takes about two minutes. A malformed inspection is retried once. HTTP 429 switches the interrupted step to the optional backup connection once; keys in the same Google project share quota.
 
-If quota interrupts inspection or synthesis after useful evidence was checked, the UI labels the result **Partial research** and shows checked excerpts with citations. An incomplete source remains excluded. Repeated runs and retries can still exceed a project quota; the current runner does not pace requests across users.
+If quota interrupts inspection or synthesis after useful evidence was checked, the UI labels the result **Partial research** and shows checked excerpts with citations. An incomplete source remains excluded. Repeated runs and retries can still exceed a project quota; the pacing is local to this server process and cannot account for usage in other applications.
 
 ## Scope and limitations
 
-- Retrieval is limited to Wikipedia text extracts and Crossref abstracts. The two-source budget is consumed in provider order, so a run may use only Wikipedia.
+- Retrieval is limited to Wikipedia text extracts and Crossref abstracts. The six-source budget is consumed in provider order, so a run may use only Wikipedia.
 - The guard receives up to 6,000 characters per source. Content outside that excerpt is outside the inspection.
 - Detection and synthesis depend on the model. Correct source numbering does not independently verify every factual claim.
 - The application exposes fixed read-only operations. The form-submission demo is a simulated denial; the prototype does not integrate with arbitrary agents' tools.
