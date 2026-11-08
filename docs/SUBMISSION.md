@@ -22,9 +22,9 @@ The supplied NYCAIRR X HackBU Hacker Guide lists a submission deadline of Novemb
 - [x] Local credential storage is excluded from Git.
 - [x] Fictional inspection examples and offline playback are labeled.
 - [x] Recorded six-case live evaluation includes source responses and a guard commit.
-- [x] Eleven automated tests passed.
+- [x] Fifteen automated tests passed.
 - [x] Quota failover and partial-result handling have regression coverage.
-- [x] Verify the public branch can be cloned and all eleven tests pass from that clean checkout using the installed Python dependencies.
+- [x] Verify the public branch can be cloned and all fifteen tests pass from that clean checkout using the installed Python dependencies.
 - [ ] Run a final six-source live research example successfully.
 - [ ] Rehearse the live source-inspection and simulated permission-denial demo.
 - [ ] Record a fallback demo and check that it contains no credentials.
