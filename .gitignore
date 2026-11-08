@@ -1,4 +1,5 @@
 # Local credentials and environment
+.streamlit/secrets.toml
 .env
 .env.*
 !.env.example
