@@ -13,7 +13,7 @@ class StudyGuardTests(unittest.TestCase):
             run_action("submit_form", missed_attack)
 
     def test_offline_sample_and_changed_input(self):
-        app = AppTest.from_file("app.py").run()
+        app = AppTest.from_file("pages/1_Source_Inspector.py").run()
         app.radio[0].set_value("Offline example").run()
         app.button[0].click().run()
         self.assertFalse(app.exception)
