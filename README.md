@@ -6,7 +6,7 @@ Team workspace for the NYCAIRR AI Responsibility Hackathon, November 7–8, 2026
 
 ## Project status
 
-AgentGuard starts with a research question. Gemini plans up to two searches, and the app retrieves up to six article introductions or abstracts from Wikipedia and Crossref. A guard inspects each excerpt before synthesis. Flagged, failed, or empty extractions cannot supply evidence. The report links its findings to the checked sources. The separate Source Inspector page retains the manual inspection demo and its recorded evaluation.
+AgentGuard starts with a research question. Gemini plans up to two searches, and the app retrieves up to two article introductions or abstracts from Wikipedia and Crossref. A guard inspects each excerpt before synthesis. Flagged, failed, or empty extractions cannot supply evidence. The report links its findings to the checked sources. The separate Source Inspector page retains the manual inspection demo and its recorded evaluation.
 
 ## Working together
 
@@ -71,7 +71,7 @@ notes and JSON and show a generic error without SDK exception details.
 python -m unittest discover -v
 ```
 
-Nine tests cover quota failover, guarded research evidence and citations, response validation, clean and threat display, note extraction,
+Ten tests cover the two-source cap, quota failover, guarded research evidence and citations, response validation, clean and threat display, note extraction,
 permission denial, changed inputs, failed inspections, failed sample loading,
 plain-text display and avoiding repeated live calls on reruns.
 
