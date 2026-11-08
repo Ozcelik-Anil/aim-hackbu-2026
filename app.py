@@ -50,9 +50,9 @@ if "research_result" in st.session_state:
     st.html(f"<h2>{escape(topic)}</h2>")
     if findings and any("quota reached" in w for w in warnings):
         st.warning("Partial research: Gemini quota was reached. Only previously checked source excerpts are shown.")
+    for warning in dict.fromkeys(warnings):
+        st.warning(warning)
     if not findings:
-        for warning in dict.fromkeys(warnings):
-            st.warning(warning)
         st.info("There was insufficient checked evidence for a cited answer.")
     by_number = {source["number"]: source for source in sources}
     for finding in findings:
@@ -69,3 +69,21 @@ if "research_result" in st.session_state:
         for source in sources:
             st.text(f"[{source['number']}] {source['title']} | {source['status']}")
             st.link_button(f"Open source {source['number']}", source["url"])
+            with st.expander(f"Inspection evidence for source {source['number']}"):
+                st.caption("Untrusted excerpt actually sent to the guard (may be truncated)")
+                st.text(source.get("excerpt", "Not recorded for this earlier run."))
+                verdict = source.get("verdict")
+                if verdict is None:
+                    st.warning("INSPECTION UNAVAILABLE - No valid guard verdict. This source cannot support findings.")
+                else:
+                    if verdict["has_malicious_instruction"]:
+                        st.error("THREAT DETECTED - Excluded from research evidence.")
+                    else:
+                        st.success("CLEAN VERDICT - No malicious instruction detected.")
+                    st.caption("Attempted action")
+                    st.text(verdict["blocked_action"] or "None identified.")
+                    st.caption("Guard reason")
+                    st.text(verdict["reason"])
+                    st.caption("Extracted notes (a flagged source is excluded even if notes remain)")
+                    st.text(verdict["safe_extracted_content"] or "No usable notes.")
+                    st.json(verdict)
