@@ -52,6 +52,9 @@ submission is denied. No credentials are collected or transmitted by the simulat
 
 Set `GEMINI_API_KEY` in your server environment before launching Streamlit.
 Alternatively, the local research homepage accepts a key in its masked session field.
+The optional backup connection accepts a second authorized Gemini key here or via
+`GEMINI_BACKUP_API_KEY`. On HTTP 429 the research run retries the same step once
+with the backup and uses it for the rest of the run. Keys in one project share quota.
 Ask a question and choose **Start research**. Keep keys out of source files and commits.
 To inspect an individual sample instead, open **Source Inspector**, select **Live Gemini**, then
 load the sample or edit the page and click **Inspect page**. Only fictional page
@@ -67,7 +70,7 @@ notes and JSON and show a generic error without SDK exception details.
 python -m unittest discover -v
 ```
 
-Eight tests cover guarded research evidence and citations, response validation, clean and threat display, note extraction,
+Nine tests cover quota failover, guarded research evidence and citations, response validation, clean and threat display, note extraction,
 permission denial, changed inputs, failed inspections, failed sample loading,
 plain-text display and avoiding repeated live calls on reruns.
 
