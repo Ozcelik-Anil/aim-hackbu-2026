@@ -36,7 +36,7 @@ class GeminiResponseTests(unittest.TestCase):
         generate = client.return_value.__enter__.return_value.models.generate_content
         clean = {**SAMPLE_RESULT, "has_malicious_instruction": False, "blocked_action": "", "reason": "Lesson facts only."}
         generate.return_value.text = json.dumps(clean)
-        ui = AppTest.from_file("app.py").run()
+        ui = AppTest.from_file("pages/1_Source_Inspector.py").run()
         ui.text_area[0].set_value(NOTES).run()
         ui.button[1].click().run()
         self.assertTrue(ui.success)
