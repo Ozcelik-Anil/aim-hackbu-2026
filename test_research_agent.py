@@ -53,3 +53,11 @@ class ResearchTests(unittest.TestCase):
         sources, findings, _ = investigate("topic", "primary", lambda _: None, "backup")
         self.assertEqual(sources[0]["status"], "Checked")
         self.assertEqual(findings[0].text, "Fact")
+
+        wiki.return_value.append(Source("Second", "https://en.wikipedia.org/?curid=2", "Unchecked text"))
+        guard.side_effect = [GuardResult(has_malicious_instruction=False, blocked_action="",
+            reason="OK", safe_extracted_content="Checked fact"), quota, quota]
+        model.side_effect = [Plan(queries=["topic"])]
+        sources, findings, warnings = investigate("topic", "primary", lambda _: None, "backup")
+        self.assertEqual([(f.text, f.source_numbers) for f in findings], [("Checked fact", [1])])
+        self.assertIn("HTTP 429", sources[1]["status"])
