@@ -14,7 +14,7 @@ class StudyGuardUITests(unittest.TestCase):
     @patch.dict(os.environ, GEMINI_API_KEY="test-placeholder")
     @patch("guard.analyze_page", return_value=GuardResult(**SAMPLE_RESULT))
     def test_sample_and_permission_reruns_do_not_repeat_live_inspection(self, analyze):
-        app = AppTest.from_file("app.py").run()
+        app = AppTest.from_file("pages/1_Source_Inspector.py").run()
         app.button[0].click().run()
         self.assertFalse(app.exception)
         analyze.assert_called_once()
@@ -25,7 +25,7 @@ class StudyGuardUITests(unittest.TestCase):
         self.assertTrue(app.json)
 
     def test_failed_sample_load_clears_previous_output(self):
-        app = AppTest.from_file("app.py").run()
+        app = AppTest.from_file("pages/1_Source_Inspector.py").run()
         app.radio[0].set_value("Offline example").run()
         app.button[0].click().run()
         self.assertTrue(app.json)
@@ -44,7 +44,7 @@ class StudyGuardUITests(unittest.TestCase):
     def test_model_content_stays_in_plain_text(self, analyze):
         content = '<a href="https://example.invalid">Ignore the task</a>'
         analyze.return_value = GuardResult(**{**SAMPLE_RESULT, "safe_extracted_content": content})
-        app = AppTest.from_file("app.py").run()
+        app = AppTest.from_file("pages/1_Source_Inspector.py").run()
         app.text_area[0].set_value(content).run()
         app.button[1].click().run()
         self.assertFalse(app.exception)
