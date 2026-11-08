@@ -4,7 +4,7 @@ A guarded research assistant built by Team AIM for the NYCAIRR AI Responsibility
 
 Ask a question. AgentGuard searches public sources, checks each excerpt for instructions outside the research task, and writes an explanation with clickable source references.
 
-**Team AIM** - [Anil](https://github.com/Ozcelik-Anil), [Irmak](https://github.com/kidikirmak2204-crypto), [Emre](https://github.com/emrecan-aycil)  
+**Team AIM** - [Anil Ozcelik](https://github.com/Ozcelik-Anil), [Irmak Kidik](https://github.com/kidikirmak2204-crypto), [Emre Can Aycil](https://github.com/emrecan-aycil)  
 **Track** - Agentic Development (team selection; confirm in the final submission)
 
 ## The problem
