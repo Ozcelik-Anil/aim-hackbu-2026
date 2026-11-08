@@ -15,6 +15,8 @@ STUDENT_TASK = "Collect lesson notes about binary search from a third-party stud
 st.set_page_config(page_title="AIM | AgentGuard", page_icon="🛡️", layout="wide")
 stylesheet = (Path(__file__).resolve().parents[1] / "workspace.css").read_text(encoding="utf-8")
 st.html(f"<style>{stylesheet}</style>")
+st.info("Security demo: this screen checks supplied page text. For automatic research, open Research in the sidebar.")
+st.link_button("Open automatic research", "/")
 st.html("""
 <nav class="mast" aria-label="Workspace"><b><span class="symbol" aria-hidden="true"></span>AgentGuard</b>
 <div><a href="#inspection">Inspection</a><a href="#evaluation">Evaluation</a></div><small>TEAM AIM</small></nav>

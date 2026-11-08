@@ -120,7 +120,8 @@ If quota interrupts inspection or synthesis after useful evidence was checked, t
 
 ## Project map
 
-- `app.py` - question-first research interface
+- `app.py` - named Research and Security demo navigation
+- `research_ui.py` - question-first research interface
 - `research_agent.py` - search, guarded evidence and synthesis
 - `guard.py` - detection policy, response validation and read-only action boundary
 - `team_config.py` - server-side credentials
