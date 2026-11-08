@@ -51,9 +51,10 @@ submission is denied. No credentials are collected or transmitted by the simulat
 ### Live Gemini
 
 Set `GEMINI_API_KEY` in your server environment before launching Streamlit.
-Alternatively, the local research homepage accepts a key in its masked session field.
-The optional backup connection accepts a second authorized Gemini key here or via
-`GEMINI_BACKUP_API_KEY`. On HTTP 429 the research run retries the same step once
+The team may instead configure the primary credential in the local, git-ignored
+`.streamlit/secrets.toml` file. Visitors only enter their research question.
+An optional second team credential uses `GEMINI_BACKUP_API_KEY` in the same file
+or server environment. On HTTP 429 the research run retries the same step once
 with the backup and uses it for the rest of the run. Keys in one project share quota.
 Ask a question and choose **Start research**. Keep keys out of source files and commits.
 To inspect an individual sample instead, open **Source Inspector**, select **Live Gemini**, then
