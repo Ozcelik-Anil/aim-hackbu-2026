@@ -1,5 +1,4 @@
 """Question-first entry point for the guarded research agent."""
-import os
 from html import escape
 from pathlib import Path
 
@@ -8,19 +7,14 @@ from google.genai.errors import APIError
 from pydantic import ValidationError
 
 from research_agent import investigate
+from team_config import team_key
 
 st.set_page_config(page_title="AgentGuard | Research", layout="wide")
 css = Path(__file__).with_name("workspace.css").read_text(encoding="utf-8")
 st.html(f"<style>{css}</style>")
 st.html('<section class="cover"><div><h1>AgentGuard Research</h1><p>Ask a question. The assistant searches public sources, checks each excerpt and returns cited findings.</p></div></section>')
-key = os.getenv("GEMINI_API_KEY")
-if not key:
-    key = st.text_input("Gemini API key for this local session", type="password", key="research_api_key")
-backup_key = os.getenv("GEMINI_BACKUP_API_KEY")
-if not backup_key:
-    with st.expander("Optional backup Gemini connection"):
-        backup_key = st.text_input("Backup Gemini API key", type="password", key="research_backup_key")
-        st.caption("On HTTP 429, retry the same step once using the backup. Keys in the same Google project share quota.")
+key = team_key("GEMINI_API_KEY")
+backup_key = team_key("GEMINI_BACKUP_API_KEY")
 st.caption("Searches Wikipedia and scholarly abstracts. Your question and source excerpts are processed by Gemini.")
 with st.form("research"):
     question = st.text_input("Research question", max_chars=600, placeholder="How do passkeys protect users against phishing?")
@@ -28,8 +22,10 @@ with st.form("research"):
 
 if submitted:
     st.session_state.pop("research_result", None)
-    if not key or not question.strip():
-        st.warning("Enter a question and configure a Gemini key to start research.")
+    if not key:
+        st.warning("The team's research service is currently unavailable.")
+    elif not question.strip():
+        st.warning("Enter a research question.")
     else:
         with st.status("Research in progress", expanded=False) as status:
             try:
