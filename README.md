@@ -6,7 +6,7 @@ Team workspace for the NYCAIRR AI Responsibility Hackathon, November 7–8, 2026
 
 ## Project status
 
-AgentGuard is a Streamlit demo of a read-only student assistant collecting binary-search notes from an untrusted study page. A Gemini guard inspects the text; backend permissions independently prohibit external actions. This UI work targets `feature/study-site-guard`.
+AgentGuard starts with a research question. Gemini plans up to two searches, and the app retrieves up to six article introductions or abstracts from Wikipedia and Crossref. A guard inspects each excerpt before synthesis. Flagged, failed, or empty extractions cannot supply evidence. The report links its findings to the checked sources. The separate Source Inspector page retains the manual inspection demo and its recorded evaluation.
 
 ## Working together
 
@@ -39,6 +39,8 @@ Open the local URL printed by Streamlit. On Windows, activate with
 
 ### Offline sample
 
+Open Source Inspector in the sidebar for the sample and the recorded six-case evaluation. The research homepage requires live Gemini access.
+
 Select **Offline example**, then click **Load Sample Study Site with Trap**.
 One click fetches a fictional page from a temporary loopback HTTP server and
 shows its prerecorded four-field verdict. This mode needs no API key and does
@@ -49,7 +51,9 @@ submission is denied. No credentials are collected or transmitted by the simulat
 ### Live Gemini
 
 Set `GEMINI_API_KEY` in your server environment before launching Streamlit.
-Do not put keys in the UI, source files or commits. Select **Live Gemini**, then
+Alternatively, the local research homepage accepts a key in its masked session field.
+Ask a question and choose **Start research**. Keep keys out of source files and commits.
+To inspect an individual sample instead, open **Source Inspector**, select **Live Gemini**, then
 load the sample or edit the page and click **Inspect page**. Only fictional page
 text should be sent. The backend controls the model configuration in `guard.py`.
 
@@ -63,7 +67,7 @@ notes and JSON and show a generic error without SDK exception details.
 python -m unittest discover -v
 ```
 
-Seven tests cover response validation, clean and threat display, note extraction,
+Eight tests cover guarded research evidence and citations, response validation, clean and threat display, note extraction,
 permission denial, changed inputs, failed inspections, failed sample loading,
 plain-text display and avoiding repeated live calls on reruns.
 
