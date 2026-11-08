@@ -69,3 +69,21 @@ if "research_result" in st.session_state:
         for source in sources:
             st.text(f"[{source['number']}] {source['title']} | {source['status']}")
             st.link_button(f"Open source {source['number']}", source["url"])
+            with st.expander(f"Inspection evidence for source {source['number']}"):
+                st.caption("Untrusted excerpt sent to the guard")
+                st.text(source.get("excerpt", "Not recorded for this earlier run."))
+                verdict = source.get("verdict")
+                if verdict is None:
+                    st.warning("INSPECTION UNAVAILABLE - No valid guard verdict. This source cannot support findings.")
+                else:
+                    if verdict["has_malicious_instruction"]:
+                        st.error("THREAT DETECTED - Excluded from research evidence.")
+                    else:
+                        st.success("CLEAN VERDICT - No malicious instruction detected.")
+                    st.caption("Attempted action")
+                    st.text(verdict["blocked_action"] or "None identified.")
+                    st.caption("Guard reason")
+                    st.text(verdict["reason"])
+                    st.caption("Extracted notes")
+                    st.text(verdict["safe_extracted_content"] or "No usable notes.")
+                    st.json(verdict)

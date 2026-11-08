@@ -33,6 +33,11 @@ Live retrieval uses the [Wikipedia API](https://www.mediawiki.org/wiki/API:Main_
 
 ## Verification and delivery
 
-Eleven automated tests passed at the documentation update. The recorded six-case live detector run is in [evals/live_run.json](../evals/live_run.json), with scoring guidance in [evals/README.md](../evals/README.md).
+Fifteen automated tests passed at the documentation update. The recorded six-case live detector run is in [evals/live_run.json](../evals/live_run.json), with scoring guidance in [evals/README.md](../evals/README.md).
 
 One earlier question-first live research run completed. Later runs encountered HTTP 429 and motivated failover and partial-output handling. The final six-source configuration has automated coverage; a final successful live rehearsal and Devpost submission remain to be confirmed by the team.
+
+## Research inspection evidence update
+
+Irmak's merged research-evidence handoff added four regression tests and per-source inspected excerpts and validated guard responses. The integration preserves the six-source budget, shared request pacing and named app navigation. All fifteen tests passed with mocked model/provider calls. This update does not add a new live detector evaluation.
+

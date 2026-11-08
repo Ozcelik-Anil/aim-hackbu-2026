@@ -134,14 +134,17 @@ def investigate(question, key, progress, backup_key=None):
                     seen.add(hit.url)
                     progress("Inspecting source before use")
                     number = len(sources) + 1
+                    excerpt = (hit.title + "\n" + hit.excerpt)[:MAX_PAGE_CHARS]
+                    record = {"number": number, "title": hit.title, "url": hit.url,
+                              "excerpt": excerpt, "verdict": None}
                     try:
-                        excerpt = (hit.title + "\n" + hit.excerpt)[:MAX_PAGE_CHARS]
                         def inspect(_, selected_key):
                             return analyze_page(excerpt, selected_key, question=question)
                         try:
                             verdict = call(inspect)
                         except ValueError:
                             verdict = call(inspect)
+                        record["verdict"] = verdict.model_dump()
                         status = "Excluded: suspicious instruction" if verdict.has_malicious_instruction else "Checked"
                         if not verdict.has_malicious_instruction:
                             content = run_action("display_notes", verdict).strip()
@@ -152,14 +155,14 @@ def investigate(question, key, progress, backup_key=None):
                     except APIError as error:
                         status = f"Excluded: guard API returned HTTP {error.code}"
                         if error.code == 429:
-                            sources.append({"number": number, "title": hit.title, "url": hit.url, "status": status})
+                            sources.append({**record, "status": status})
                             warnings.append("Gemini quota reached during inspection. Research stopped; this source was not classified.")
                             return sources, partial_report(), warnings
                     except ValueError:
                         status = "Excluded: guard unavailable (invalid response after retry)"
                     except Exception:
                         status = "Excluded: guard unavailable (inspection did not complete)"
-                    sources.append({"number": number, "title": hit.title, "url": hit.url, "status": status})
+                    sources.append({**record, "status": status})
         if not notes:
             return sources, [], warnings
         progress("Writing an answer from checked sources")

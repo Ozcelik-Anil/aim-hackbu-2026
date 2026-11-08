@@ -20,7 +20,7 @@ AgentGuard checks source excerpts before synthesis and keeps the prototype's ava
 3. Python searches Wikipedia and Crossref and considers at most six unique source excerpts per run.
 4. A Gemini guard checks each excerpt. Python validates its four-field JSON response and rejects inconsistent output.
 5. Checked, relevant notes supply the final explanation. Suspicious instructions, empty notes, and failed inspections are excluded.
-6. Each paragraph links to the source numbers it uses. The user can expand the source list and guard decisions.
+6. Each paragraph links to the source numbers it uses. The user can expand the source list and guard decisions, including the exact inspected excerpt and validated JSON for each source.
 
 ```mermaid
 flowchart LR
@@ -92,7 +92,7 @@ Run the tests with your virtual environment's Python:
 python -m unittest discover -v
 ```
 
-The latest check passed **11 automated tests**. They cover the six-source cap and shared request pacing, checked-evidence and citation handling, quota failover, malformed responses, permission denial, stale output, sample-load failures, plain-text display and reruns. Model responses in these tests are mocked.
+The latest check passed **15 automated tests**. They cover the six-source cap and shared request pacing, checked-evidence and citation handling, quota failover, malformed responses, permission denial, stale output, sample-load failures, plain-text display and reruns. Model responses in these tests are mocked.
 
 A separate live run evaluated six fictional pages in three matched attack/clean pairs:
 
