@@ -32,13 +32,13 @@ if submitted:
                 st.session_state["research_result"] = question, sources, findings, warnings
                 status.update(label="Research complete" if findings else "No supported answer found", state="complete" if findings else "error")
             except APIError as error:
-                status.update(label="Gemini request failed", state="error")
+                status.update(label="Gemini request failed", state="error", expanded=True)
                 st.error(f"Gemini returned HTTP {error.code}. " + ("The model quota or rate limit was reached." if error.code == 429 else "Check model availability and account access."))
             except ValidationError:
-                status.update(label="Incomplete model response", state="error")
+                status.update(label="Incomplete model response", state="error", expanded=True)
                 st.error("Gemini did not return a valid research plan or answer. Try again.")
             except Exception:
-                status.update(label="Research unavailable", state="error")
+                status.update(label="Research unavailable", state="error", expanded=True)
                 st.error("The research service could not complete this request. Check model access and try again.")
 
 if "research_result" in st.session_state:
