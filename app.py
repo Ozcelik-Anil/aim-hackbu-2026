@@ -31,7 +31,10 @@ if submitted:
             try:
                 sources, findings, warnings = investigate(question.strip(), key, status.write, backup_key)
                 st.session_state["research_result"] = question, sources, findings, warnings
-                status.update(label="Research complete" if findings else "No supported answer found", state="complete" if findings else "error")
+                label = "Research complete" if findings else "No supported answer found"
+                if findings and any("quota reached" in w for w in warnings):
+                    label = "Partial research"
+                status.update(label=label, state="complete" if findings else "error")
             except APIError as error:
                 status.update(label="Gemini request failed", state="error", expanded=True)
                 st.error(f"Gemini returned HTTP {error.code}. " + ("The model quota or rate limit was reached." if error.code == 429 else "Check model availability and account access."))
@@ -45,6 +48,8 @@ if submitted:
 if "research_result" in st.session_state:
     topic, sources, findings, warnings = st.session_state["research_result"]
     st.html(f"<h2>{escape(topic)}</h2>")
+    if findings and any("quota reached" in w for w in warnings):
+        st.warning("Partial research: Gemini quota was reached. Only previously checked source excerpts are shown.")
     if not findings:
         for warning in dict.fromkeys(warnings):
             st.warning(warning)
