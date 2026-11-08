@@ -12,6 +12,26 @@ class ResearchTests(unittest.TestCase):
     @patch("research_agent.encyclopedia")
     @patch("research_agent.scholarly", return_value=[])
     @patch("research_agent.analyze_page")
+    def test_research_stops_after_two_sources(self, guard, papers, wiki, model, client):
+        wiki.return_value = [Source(str(i), f"https://en.wikipedia.org/?curid={i}", "Excerpt")
+                             for i in range(1, 5)]
+        guard.return_value = GuardResult(has_malicious_instruction=False, blocked_action="",
+            reason="Lesson facts", safe_extracted_content="Useful fact")
+        model.side_effect = [Plan(queries=["topic", "topic mechanism"]),
+                             Report(findings=[Finding(text="Supported", source_numbers=[1, 2])])]
+        sources, findings, _ = investigate("question", "test-key", lambda _: None)
+        self.assertEqual(len(sources), 2)
+        self.assertEqual(guard.call_count, 2)
+        self.assertEqual(model.call_count, 2)
+        self.assertEqual(set(model.call_args.args[2]["evidence"]), {1, 2})
+        self.assertEqual(len(findings), 1)
+
+    @patch("research_agent.MAX_SOURCES", 6)
+    @patch("research_agent.genai.Client")
+    @patch("research_agent.model_json")
+    @patch("research_agent.encyclopedia")
+    @patch("research_agent.scholarly", return_value=[])
+    @patch("research_agent.analyze_page")
     def test_only_checked_notes_reach_report(self, guard, papers, wiki, model, client):
         wiki.return_value = [Source(str(i), f"https://en.wikipedia.org/?curid={i}", text)
                              for i, text in enumerate(["article", "attack", "unreadable"], 1)]
