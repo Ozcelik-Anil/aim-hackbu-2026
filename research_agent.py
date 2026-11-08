@@ -13,6 +13,8 @@ from pydantic import BaseModel
 from guard import MAX_PAGE_CHARS, MODEL, analyze_page, run_action
 from study_site import PageText
 
+MAX_SOURCES = 2
+
 
 class Plan(BaseModel):
     queries: list[str]
@@ -100,7 +102,7 @@ def investigate(question, key, progress, backup_key=None):
         queries = [q.strip()[:200] for q in plan.queries if q.strip()][:2]
         for query in dict.fromkeys(queries):
             for label, provider in (("Wikipedia", encyclopedia), ("Crossref", scholarly)):
-                if len(sources) >= 6:
+                if len(sources) >= MAX_SOURCES:
                     break
                 progress(f"Searching {label}: {query}")
                 try:
@@ -109,7 +111,7 @@ def investigate(question, key, progress, backup_key=None):
                     warnings.append(f"{label} search unavailable.")
                     continue
                 for hit in hits:
-                    if hit.url in seen or len(sources) >= 6:
+                    if hit.url in seen or len(sources) >= MAX_SOURCES:
                         continue
                     seen.add(hit.url)
                     progress("Inspecting source before use")
