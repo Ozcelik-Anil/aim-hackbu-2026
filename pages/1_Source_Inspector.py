@@ -1,6 +1,5 @@
 """Study Guard UI. Untrusted content is displayed as plain text only."""
 
-import os
 import json
 from pathlib import Path
 
@@ -9,6 +8,7 @@ from google.genai.errors import APIError
 
 from guard import GuardResult, MAX_PAGE_CHARS, analyze_page, run_action
 from study_site import SAMPLE_PAGE, SAMPLE_RESULT, read_sample_site
+from team_config import team_key
 
 STUDENT_TASK = "Collect lesson notes about binary search from a third-party study page."
 
@@ -29,14 +29,15 @@ st.html(f'<div class="request" id="inspection"><strong>Student request</strong><
 left, right = st.columns([1, 1.12], gap="medium")
 with left:
     st.header("Source page", anchor=False)
-    has_key = bool(os.getenv("GEMINI_API_KEY"))
+    api_key = team_key("GEMINI_API_KEY")
+    has_key = bool(api_key)
     mode = st.radio("Inspection mode", ["Live Gemini", "Offline example"], index=0 if has_key else 1, horizontal=True)
     if mode == "Offline example":
         st.caption("Replays the sample verdict locally. Use Live Gemini for custom pages.")
     else:
         st.caption("Inspection sends page text to Gemini. Use fictional data.")
         if not has_key:
-            st.warning("Live mode needs GEMINI_API_KEY configured on the server.")
+            st.warning("The team's live inspection service is currently unavailable.")
 
     sample = st.button("Load Sample Study Site with Trap", width="stretch")
     load_failed = False
@@ -76,10 +77,10 @@ with right:
                 else:
                     result = GuardResult(**SAMPLE_RESULT)
             elif not has_key:
-                error_message = "Configure GEMINI_API_KEY on the server, or use offline sample playback."
+                error_message = "The team's live inspection service is unavailable. Offline playback is available."
             else:
                 with st.spinner("Inspecting the page with Gemini..."):
-                    result = analyze_page(page)
+                    result = analyze_page(page, api_key)
             if error_message is None:
                 st.session_state["inspection"] = (page, mode, result)
         except APIError as error:
