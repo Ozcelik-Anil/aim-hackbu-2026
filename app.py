@@ -16,6 +16,11 @@ st.html('<section class="cover"><div><h1>AgentGuard Research</h1><p>Ask a questi
 key = os.getenv("GEMINI_API_KEY")
 if not key:
     key = st.text_input("Gemini API key for this local session", type="password", key="research_api_key")
+backup_key = os.getenv("GEMINI_BACKUP_API_KEY")
+if not backup_key:
+    with st.expander("Optional backup Gemini connection"):
+        backup_key = st.text_input("Backup Gemini API key", type="password", key="research_backup_key")
+        st.caption("On HTTP 429, retry the same step once using the backup. Keys in the same Google project share quota.")
 st.caption("Searches Wikipedia and scholarly abstracts. Your question and source excerpts are processed by Gemini.")
 with st.form("research"):
     question = st.text_input("Research question", max_chars=600, placeholder="How do passkeys protect users against phishing?")
@@ -28,7 +33,7 @@ if submitted:
     else:
         with st.status("Research in progress", expanded=False) as status:
             try:
-                sources, findings, warnings = investigate(question.strip(), key, status.write)
+                sources, findings, warnings = investigate(question.strip(), key, status.write, backup_key)
                 st.session_state["research_result"] = question, sources, findings, warnings
                 status.update(label="Research complete" if findings else "No supported answer found", state="complete" if findings else "error")
             except APIError as error:
@@ -45,6 +50,8 @@ if "research_result" in st.session_state:
     topic, sources, findings, warnings = st.session_state["research_result"]
     st.html(f"<h2>{escape(topic)}</h2>")
     if not findings:
+        for warning in dict.fromkeys(warnings):
+            st.warning(warning)
         st.info("There was insufficient checked evidence for a cited answer.")
     by_number = {source["number"]: source for source in sources}
     for finding in findings:
