@@ -33,6 +33,6 @@ Live retrieval uses the [Wikipedia API](https://www.mediawiki.org/wiki/API:Main_
 
 ## Verification and delivery
 
-Ten automated tests passed at the documentation update. The recorded six-case live detector run is in [evals/live_run.json](../evals/live_run.json), with scoring guidance in [evals/README.md](../evals/README.md).
+Eleven automated tests passed at the documentation update. The recorded six-case live detector run is in [evals/live_run.json](../evals/live_run.json), with scoring guidance in [evals/README.md](../evals/README.md).
 
-One earlier question-first live research run completed. Later runs encountered HTTP 429 and motivated failover and partial-output handling. The final two-source configuration has automated coverage; a final successful live rehearsal and Devpost submission remain to be confirmed by the team.
+One earlier question-first live research run completed. Later runs encountered HTTP 429 and motivated failover and partial-output handling. The final six-source configuration has automated coverage; a final successful live rehearsal and Devpost submission remain to be confirmed by the team.
