@@ -36,3 +36,12 @@ Live retrieval uses the [Wikipedia API](https://www.mediawiki.org/wiki/API:Main_
 Ten automated tests passed at the documentation update. The recorded six-case live detector run is in [evals/live_run.json](../evals/live_run.json), with scoring guidance in [evals/README.md](../evals/README.md).
 
 One earlier question-first live research run completed. Later runs encountered HTTP 429 and motivated failover and partial-output handling. The final two-source configuration has automated coverage; a final successful live rehearsal and Devpost submission remain to be confirmed by the team.
+
+## Research audit update - November 8, 2026
+
+Codex added per-source inspected excerpts and validated guard verdicts, displayed
+them in plain-text Streamlit widgets, and added four regression tests for evidence
+integrity, rerun behavior, failed research and unavailable guard verdicts. All 14
+tests passed locally with mocked model/provider calls. No new live Gemini run
+or public deployment was performed for this update. Local-only delivery remains
+the team requirement.
